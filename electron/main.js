@@ -143,26 +143,26 @@ function initDB() {
   const CURRENT_VERSION = 7;
 
   const migrations = [
-    // v1 — initial columns missing from early builds
+    // v1 — initial columns missing from early builds (each wrapped individually)
     () => {
-      db.exec("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'user'");
-      db.exec("ALTER TABLE records ADD COLUMN barcode TEXT DEFAULT ''");
-      db.exec("ALTER TABLE users ADD COLUMN must_change_password INTEGER DEFAULT 0");
+      try { db.exec("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'user'"); } catch {}
+      try { db.exec("ALTER TABLE records ADD COLUMN barcode TEXT DEFAULT ''"); } catch {}
+      try { db.exec("ALTER TABLE users ADD COLUMN must_change_password INTEGER DEFAULT 0"); } catch {}
     },
     // v2 — new record fields
     () => {
-      db.exec("ALTER TABLE records ADD COLUMN num_tracks INTEGER DEFAULT 0");
-      db.exec("ALTER TABLE records ADD COLUMN record_size TEXT DEFAULT ''");
-      db.exec("ALTER TABLE records ADD COLUMN rpm TEXT DEFAULT ''");
-      db.exec("ALTER TABLE records ADD COLUMN style TEXT DEFAULT ''");
-      db.exec("ALTER TABLE records ADD COLUMN channels TEXT DEFAULT ''");
+      try { db.exec("ALTER TABLE records ADD COLUMN num_tracks INTEGER DEFAULT 0"); } catch {}
+      try { db.exec("ALTER TABLE records ADD COLUMN record_size TEXT DEFAULT ''"); } catch {}
+      try { db.exec("ALTER TABLE records ADD COLUMN rpm TEXT DEFAULT ''"); } catch {}
+      try { db.exec("ALTER TABLE records ADD COLUMN style TEXT DEFAULT ''"); } catch {}
+      try { db.exec("ALTER TABLE records ADD COLUMN channels TEXT DEFAULT ''"); } catch {}
     },
     // v3 — user profile fields
     () => {
-      db.exec("ALTER TABLE users ADD COLUMN first_name TEXT DEFAULT ''");
-      db.exec("ALTER TABLE users ADD COLUMN last_name TEXT DEFAULT ''");
-      db.exec("ALTER TABLE users ADD COLUMN email TEXT DEFAULT ''");
-      db.exec("ALTER TABLE users ADD COLUMN last_login TEXT DEFAULT NULL");
+      try { db.exec("ALTER TABLE users ADD COLUMN first_name TEXT DEFAULT ''"); } catch {}
+      try { db.exec("ALTER TABLE users ADD COLUMN last_name TEXT DEFAULT ''"); } catch {}
+      try { db.exec("ALTER TABLE users ADD COLUMN email TEXT DEFAULT ''"); } catch {}
+      try { db.exec("ALTER TABLE users ADD COLUMN last_login TEXT DEFAULT NULL"); } catch {}
     },
     // v4 — previous login tracking
     () => {
