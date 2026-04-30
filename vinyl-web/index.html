@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+  <title>Vinyl Crate Digger</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0d0d1a;
+      --bgCard:   #13132b;
+      --bgDeep:   #0a0a14;
+      --purple:   #7c3aed;
+      --purpleL:  #a78bfa;
+      --purpleD:  #4c1d95;
+      --blue:     #3b82f6;
+      --border:   rgba(124,58,237,0.25);
+      --borderH:  rgba(124,58,237,0.55);
+      --text:     #e2e8f0;
+      --muted:    #94a3b8;
+      --dim:      #475569;
+      --gold:     #f59e0b;
+      --card-min: 180px;
+    }
+
+    html { font-size: 16px; }
+    body {
+      font-family: "DM Sans", -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Header ── */
+    header {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(124,58,237,0.12), transparent);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .header-vinyl {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #1c1c1c, #0a0a0a);
+      border: 1px solid var(--purpleD);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      animation: spin 8s linear infinite;
+    }
+    .header-vinyl::after {
+      content: "";
+      width: 11px; height: 11px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--purpleD), var(--bg));
+      border: 1px solid var(--purple);
+    }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    .header-text { flex: 1; min-width: 0; }
+    h1 {
+      font-family: "DM Serif Display", serif;
+      font-size: 20px;
+      font-weight: 400;
+      color: var(--text);
+      letter-spacing: 0.01em;
+    }
+    .subtitle { font-size: 12px; color: var(--muted); margin-top: 1px; }
+
+    /* ── Controls ── */
+    .controls {
+      padding: 10px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      background: rgba(13,13,26,0.95);
+      position: sticky;
+      top: 67px;
+      z-index: 99;
+      backdrop-filter: blur(8px);
+    }
+
+    .search-wrap {
+      flex: 1;
+      min-width: 200px;
+      position: relative;
+    }
+    .search-wrap::before {
+      content: "⌕";
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--dim);
+      font-size: 16px;
+      pointer-events: none;
+    }
+
+    input[type="text"], select {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: "DM Sans", sans-serif;
+      font-size: 14px;
+      padding: 8px 12px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding-left: 32px;
+    }
+    input[type="text"]:focus, select:focus { border-color: var(--purple); }
+    select option { background: var(--bgCard); }
+
+    .controls-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .view-btn {
+      padding: 7px 14px;
+      font-size: 13px;
+      font-family: "DM Sans", sans-serif;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .view-btn.active {
+      background: linear-gradient(135deg, var(--purple), var(--blue));
+      color: #fff;
+      border-color: transparent;
+    }
+    .view-btn:not(.active):hover {
+      border-color: var(--borderH);
+      color: var(--text);
+    }
+
+    /* Zoom slider */
+    .zoom-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .zoom-label { font-size: 11px; color: var(--dim); white-space: nowrap; }
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 80px;
+      height: 4px;
+      background: rgba(124,58,237,0.3);
+      border-radius: 2px;
+      outline: none;
+      cursor: pointer;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: var(--purple);
+      cursor: pointer;
+      box-shadow: 0 0 6px rgba(124,58,237,0.5);
+    }
+
+    .count-badge {
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    /* ── Grid ── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(var(--card-min), 1fr));
+      gap: 14px;
+      padding: 20px;
+    }
+
+    .card {
+      background: var(--bgCard);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+      animation: fadeUp 0.3s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .card:hover, .card:active {
+      border-color: var(--purpleL);
+      box-shadow: 0 8px 24px rgba(124,58,237,0.25);
+      transform: translateY(-2px);
+    }
+
+    .card-art {
+      width: 100%;
+      aspect-ratio: 1/1;
+      background: var(--bgDeep);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .card-art img { width: 100%; height: 100%; object-fit: cover; }
+
+    .card-vinyl {
+      width: 65%; aspect-ratio: 1/1;
+      border-radius: 50%;
+      background: radial-gradient(circle, #1c1c1c 0%, #0a0a0a 55%, #1a1a1a 100%);
+      border: 1px solid var(--purpleD);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .card-vinyl::after {
+      content: "";
+      width: 28%; aspect-ratio: 1/1;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--purpleD), var(--bg));
+      border: 1px solid var(--purple);
+    }
+
+    .card-info {
+      padding: 10px 12px 12px;
+    }
+    .card-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.3;
+    }
+    .card-artist {
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 2px;
+    }
+    .card-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3px;
+      margin-top: 7px;
+    }
+    .pill {
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.06);
+      color: var(--muted);
+      border: 0.5px solid var(--border);
+      white-space: nowrap;
+    }
+    .stars { color: var(--gold); }
+
+    /* ── List ── */
+    .list { padding: 0 20px 24px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 500px; }
+    thead tr { border-bottom: 1px solid var(--border); }
+    th {
+      padding: 10px 10px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--purple);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    tbody tr {
+      border-bottom: 1px solid rgba(124,58,237,0.06);
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+    tbody tr:hover, tbody tr:active { background: rgba(124,58,237,0.07); }
+    td { padding: 10px 10px; font-size: 14px; color: var(--text); }
+    td.muted { color: var(--muted); font-size: 13px; }
+
+    .thumb {
+      width: 36px; height: 36px;
+      border-radius: 5px;
+      overflow: hidden;
+      background: var(--bgDeep);
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .thumb-vinyl {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #222, #0a0a0a);
+      border: 1px solid var(--purpleD);
+    }
+
+    /* ── Detail overlay ── */
+    .overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.85);
+      display: flex; align-items: flex-end; justify-content: center;
+      z-index: 200;
+      padding: 0;
+      opacity: 0;
+      transition: opacity 0.25s;
+      pointer-events: none;
+    }
+    .overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .detail {
+      background: var(--bgCard);
+      border: 1px solid var(--border);
+      border-radius: 20px 20px 0 0;
+      width: 100%;
+      max-width: 700px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 -8px 60px rgba(124,58,237,0.25);
+      transform: translateY(40px);
+      transition: transform 0.3s cubic-bezier(0.34,1.2,0.64,1);
+      overscroll-behavior: contain;
+    }
+    .overlay.open .detail {
+      transform: translateY(0);
+    }
+
+    /* On wider screens, show as centered modal */
+    @media (min-width: 640px) {
+      .overlay {
+        align-items: center;
+        padding: 20px;
+      }
+      .detail {
+        border-radius: 16px;
+        max-height: 85vh;
+        transform: scale(0.96) translateY(10px);
+      }
+      .overlay.open .detail {
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .drag-handle {
+      width: 36px; height: 4px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 2px;
+      margin: 10px auto 0;
+    }
+
+    .detail-close-row {
+      display: flex;
+      justify-content: flex-end;
+      padding: 10px 16px 0;
+      position: sticky;
+      top: 0;
+      background: var(--bgCard);
+      z-index: 1;
+    }
+    .close-btn {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--muted);
+      font-size: 16px;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .close-btn:hover { background: rgba(255,255,255,0.15); color: var(--text); }
+
+    .detail-hero {
+      padding: 16px 20px 20px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      background: linear-gradient(180deg, rgba(124,58,237,0.1), transparent);
+    }
+
+    .detail-cover {
+      width: 120px; height: 120px;
+      flex-shrink: 0;
+      border-radius: 10px;
+      overflow: hidden;
+      background: var(--bgDeep);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .detail-cover img { width: 100%; height: 100%; object-fit: cover; }
+
+    @media (min-width: 480px) {
+      .detail-cover { width: 150px; height: 150px; }
+    }
+
+    .detail-title {
+      font-family: "DM Serif Display", serif;
+      font-size: 20px;
+      font-weight: 400;
+      color: var(--text);
+      line-height: 1.2;
+    }
+    @media (min-width: 480px) {
+      .detail-title { font-size: 24px; }
+    }
+    .detail-artist { font-size: 14px; color: var(--muted); margin-top: 4px; }
+    .detail-label  { font-size: 12px; color: var(--purpleL); margin-top: 4px; }
+
+    .detail-meta-pills {
+      display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px;
+    }
+    .meta-pill {
+      font-size: 11px; padding: 3px 9px; border-radius: 20px;
+      background: rgba(124,58,237,0.12);
+      color: var(--purpleL);
+      border: 0.5px solid var(--border);
+    }
+
+    .detail-body { padding: 0 20px 28px; }
+
+    .section-head {
+      display: flex; align-items: center; gap: 8px;
+      margin: 18px 0 10px;
+    }
+    .section-head::before {
+      content: "";
+      display: block;
+      width: 3px; height: 14px;
+      border-radius: 2px;
+      background: linear-gradient(to bottom, var(--purple), var(--blue));
+      flex-shrink: 0;
+    }
+    .section-label {
+      font-size: 11px; font-weight: 500;
+      letter-spacing: 0.1em;
+      color: var(--purpleL);
+      text-transform: uppercase;
+    }
+
+    .tracklist { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+    .track-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 9px 14px;
+      border-bottom: 1px solid rgba(124,58,237,0.06);
+      font-size: 14px;
+    }
+    .track-row:last-child { border-bottom: none; }
+    .track-num { color: var(--dim); min-width: 22px; text-align: right; font-size: 12px; }
+    .track-title { flex: 1; }
+    .track-dur { color: var(--muted); font-size: 12px; flex-shrink: 0; }
+
+    /* ── Images gallery ── */
+    .image-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .image-gallery img {
+      width: 100%; aspect-ratio: 1/1;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      cursor: zoom-in;
+      transition: transform 0.15s;
+    }
+    .image-gallery img:hover { transform: scale(1.03); }
+
+    /* ── Lightbox ── */
+    .lightbox {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.95);
+      z-index: 300;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox img {
+      max-width: 100%; max-height: 100%;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+    .lightbox-close {
+      position: fixed; top: 16px; right: 16px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #fff; font-size: 20px;
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* ── Loading / Empty ── */
+    .center {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 60px 20px;
+      color: var(--muted);
+      font-size: 14px;
+      gap: 12px;
+      text-align: center;
+    }
+
+    /* ── Mobile overrides ── */
+    @media (max-width: 480px) {
+      header { padding: 12px 16px; }
+      h1 { font-size: 18px; }
+      .controls { padding: 8px 16px; top: 63px; }
+      .zoom-wrap { display: none; } /* hide zoom on mobile — pinch zoom works */
+      .grid { padding: 14px 16px; gap: 10px; }
+      .list { padding: 0 16px 24px; }
+      td { font-size: 13px; }
+    }
+
+    @media (hover: none) {
+      /* Touch devices — bigger tap targets */
+      .view-btn { padding: 9px 16px; }
+      .card:hover { transform: none; }
+    }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bgDeep); }
+    ::-webkit-scrollbar-thumb { background: var(--purpleD); border-radius: 3px; }
+
+    /* ── Lyrics Modal ── */
+    .lyrics-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 400;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .lyrics-overlay.open { display: flex; }
+
+    .lyrics-modal {
+      background: var(--bgCard);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 560px;
+      min-width: 280px;
+      min-height: 300px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 60px rgba(124,58,237,0.3);
+      resize: both;
+      overflow: auto;
+    }
+
+    .lyrics-header {
+      padding: 16px 20px 12px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg,rgba(124,58,237,0.12),transparent);
+      flex-shrink: 0;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .lyrics-header-info { flex: 1; min-width: 0; }
+    .lyrics-notes { font-size: 20px; margin-right: 6px; }
+    .lyrics-track-title {
+      font-size: 15px; font-weight: 600; color: var(--text);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .lyrics-meta { font-size: 12px; color: var(--muted); margin-top: 3px; }
+    .lyrics-close {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--muted); font-size: 16px;
+      width: 30px; height: 30px; border-radius: 50%;
+      cursor: pointer; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .lyrics-close:hover { background: rgba(255,255,255,0.15); color: var(--text); }
+
+    .lyrics-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+    .lyrics-text {
+      font-size: 14px; line-height: 2;
+      color: var(--text);
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: "DM Sans", sans-serif;
+    }
+    .lyrics-not-found {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      min-height: 200px; gap: 12px; text-align: center;
+    }
+    .lyrics-not-found-icon { font-size: 36px; }
+    .lyrics-source { font-size: 11px; color: var(--dim); text-align: right; margin-top: 16px; }
+    .lyrics-genius-btn {
+      padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 500;
+      background: linear-gradient(135deg,#f59e0b,#d97706); color: #000;
+      text-decoration: none; cursor: pointer; border: none; display: inline-block;
+    }
+    .track-lyrics-btn {
+      font-size: 10px; padding: 3px 10px;
+      border: none;
+      border-radius: 5px;
+      background: linear-gradient(135deg, #7c3aed, #3b82f6);
+      color: #fff;
+      cursor: pointer; white-space: nowrap;
+      flex-shrink: 0;
+      font-family: "DM Sans", sans-serif;
+      box-shadow: 0 2px 6px rgba(124,58,237,0.35);
+      transition: opacity 0.15s;
+    }
+    .track-lyrics-btn:hover { opacity: 0.85; }
+
+    @media (max-width: 480px) {
+      .lyrics-modal { max-width: 100%; border-radius: 16px 16px 0 0; }
+      .lyrics-overlay { align-items: flex-end; padding: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-vinyl"></div>
+  <div class="header-text">
+    <h1>Vinyl Crate Digger</h1>
+    <div class="subtitle" id="librarySubtitle">Loading…</div>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="search-wrap">
+    <input type="text" id="search" placeholder="Search artist or title…" oninput="filterRecords()" autocomplete="off" autocorrect="off" spellcheck="false"/>
+  </div>
+  <select id="genreFilter" onchange="filterRecords()">
+    <option value="">All genres</option>
+  </select>
+  <select id="formatFilter" onchange="filterRecords()">
+    <option value="">All formats</option>
+  </select>
+  <div class="controls-right">
+    <div class="zoom-wrap">
+      <span class="zoom-label">Size</span>
+      <input type="range" id="zoomSlider" min="140" max="320" step="10" value="200" oninput="updateZoom(this.value)"/>
+    </div>
+    <button class="view-btn active" id="btnGrid" onclick="setView('grid')">Grid</button>
+    <button class="view-btn" id="btnList" onclick="setView('list')">List</button>
+    <span class="count-badge" id="countBadge"></span>
+  </div>
+</div>
+
+<div id="content"></div>
+
+<!-- Detail overlay -->
+<div class="overlay" id="overlay" onclick="handleOverlayClick(event)">
+  <div class="detail" id="detailPanel">
+    <div class="drag-handle"></div>
+  </div>
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightboxImg" src="" alt=""/>
+</div>
+
+<!-- Lyrics Modal -->
+<div class="lyrics-overlay" id="lyricsOverlay" onclick="handleLyricsOverlayClick(event)">
+  <div class="lyrics-modal" id="lyricsModal">
+    <div class="lyrics-header">
+      <div class="lyrics-header-info">
+        <div class="lyrics-track-title" id="lyricsTrackTitle">Loading…</div>
+        <div class="lyrics-meta" id="lyricsMeta"></div>
+      </div>
+      <button class="lyrics-close" onclick="closeLyricsModal()">✕</button>
+    </div>
+    <div class="lyrics-body" id="lyricsBody">
+      <div class="lyrics-not-found">
+        <div class="lyrics-not-found-icon">🎵</div>
+        <p style="color:var(--muted);font-size:14px">Loading lyrics…</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let allRecords = [];
+  let filtered   = [];
+  let currentView = "grid";
+
+  async function init() {
+    try {
+      const res  = await fetch("/api/records");
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error);
+      allRecords = data.records;
+
+      const genres  = [...new Set(allRecords.map(r => r.genre).filter(Boolean))].sort();
+      const formats = [...new Set(allRecords.map(r => r.format).filter(Boolean))].sort();
+      const gSel = document.getElementById("genreFilter");
+      const fSel = document.getElementById("formatFilter");
+      genres.forEach(g  => { const o = document.createElement("option"); o.value = o.textContent = g; gSel.appendChild(o); });
+      formats.forEach(f => { const o = document.createElement("option"); o.value = o.textContent = f; fSel.appendChild(o); });
+
+      document.getElementById("librarySubtitle").textContent = `${allRecords.length} records in your collection`;
+      filterRecords();
+    } catch (e) {
+      document.getElementById("content").innerHTML = `<div class="center"><p>Could not load library: ${e.message}</p></div>`;
+    }
+  }
+
+  function updateZoom(val) {
+    document.documentElement.style.setProperty("--card-min", val + "px");
+    localStorage.setItem("vl_zoom", val);
+  }
+
+  // Restore saved zoom
+  const savedZoom = localStorage.getItem("vl_zoom");
+  if (savedZoom) {
+    document.getElementById("zoomSlider").value = savedZoom;
+    updateZoom(savedZoom);
+  }
+
+  function filterRecords() {
+    const q  = document.getElementById("search").value.toLowerCase();
+    const g  = document.getElementById("genreFilter").value;
+    const f  = document.getElementById("formatFilter").value;
+    filtered = allRecords.filter(r =>
+      (!q || (r.artist||"").toLowerCase().includes(q) || (r.title||"").toLowerCase().includes(q) ||
+             (r.label||"").toLowerCase().includes(q) || (r.genre||"").toLowerCase().includes(q)) &&
+      (!g || r.genre === g) &&
+      (!f || r.format === f)
+    );
+    document.getElementById("countBadge").textContent = `${filtered.length} of ${allRecords.length}`;
+    render();
+  }
+
+  function setView(v) {
+    currentView = v;
+    document.getElementById("btnGrid").classList.toggle("active", v === "grid");
+    document.getElementById("btnList").classList.toggle("active", v === "list");
+    localStorage.setItem("vl_view", v);
+    render();
+  }
+
+  // Restore saved view
+  const savedView = localStorage.getItem("vl_view");
+  if (savedView) setTimeout(() => setView(savedView), 0);
+
+  function render() {
+    const el = document.getElementById("content");
+    if (filtered.length === 0) {
+      el.innerHTML = `<div class="center"><p>No records match your search.</p></div>`;
+      return;
+    }
+    if (currentView === "grid") renderGrid(el);
+    else renderList(el);
+  }
+
+  function stars(n) {
+    return n > 0 ? `<span class="stars" style="font-size:11px">${"★".repeat(n)}</span>` : "";
+  }
+
+  function totalDur(tracks) {
+    const s = (tracks||[]).reduce((a,t) => a+(parseInt(t.mins)||0)*60+(parseInt(t.secs)||0), 0);
+    return s ? `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}` : "";
+  }
+
+  function renderGrid(el) {
+    el.className = "grid";
+    el.innerHTML = filtered.map(r => {
+      const cover = (r.images||[]).find(Boolean);
+      const dur   = totalDur(r.tracks);
+      return `
+        <div class="card" onclick="openDetail(${r.id})">
+          <div class="card-art">
+            ${cover
+              ? `<img src="${cover}" alt="" loading="lazy"/>`
+              : `<div class="card-vinyl"></div>`}
+          </div>
+          <div class="card-info">
+            <div class="card-title">${esc(r.title||"Untitled")}</div>
+            <div class="card-artist">${esc(r.artist||"")}</div>
+            <div class="card-pills">
+              ${r.year   ? `<span class="pill">${r.year}</span>` : ""}
+              ${r.genre  ? `<span class="pill">${esc(r.genre)}</span>` : ""}
+              ${dur      ? `<span class="pill">${dur}</span>` : ""}
+              ${stars(r.rating)}
+            </div>
+          </div>
+        </div>`;
+    }).join("");
+  }
+
+  function renderList(el) {
+    el.className = "list";
+    el.innerHTML = `
+      <table>
+        <thead><tr>
+          <th></th>
+          <th>Artist</th><th>Title</th><th>Year</th>
+          <th>Genre</th><th>Format</th><th>Cond.</th><th>Rating</th>
+        </tr></thead>
+        <tbody>
+          ${filtered.map(r => {
+            const cover = (r.images||[]).find(Boolean);
+            return `
+            <tr onclick="openDetail(${r.id})">
+              <td style="width:44px;padding:6px 6px 6px 10px">
+                <div class="thumb">
+                  ${cover
+                    ? `<img src="${cover}" alt="" loading="lazy"/>`
+                    : `<div class="thumb-vinyl"></div>`}
+                </div>
+              </td>
+              <td>${esc(r.artist||"")}</td>
+              <td>${esc(r.title||"")}</td>
+              <td class="muted">${r.year||""}</td>
+              <td class="muted">${esc(r.genre||"")}</td>
+              <td class="muted">${r.format||""}</td>
+              <td class="muted">${r.vinyl_cond ? `V:${r.vinyl_cond}` : ""}</td>
+              <td>${stars(r.rating)}</td>
+            </tr>`;
+          }).join("")}
+        </tbody>
+      </table>`;
+  }
+
+  function buildValueChart(history) {
+    if (!history || history.length < 2) return "";
+    const low  = history.map(h => parseFloat(h.low_value)  || 0);
+    const est  = history.map(h => parseFloat(h.est_value)  || 0);
+    const high = history.map(h => parseFloat(h.high_value) || 0);
+    const allVals = [...low, ...est, ...high].filter(v => v > 0);
+    if (!allVals.length) return "";
+    const minV = Math.min(...allVals);
+    const maxV = Math.max(...allVals);
+    const range = maxV - minV || 1;
+    const W = 400, H = 70, pad = 10;
+
+    const toPoints = (vals) => vals.map((v, i) => {
+      const x = pad + (i / (vals.length - 1)) * (W - pad * 2);
+      const y = pad + ((maxV - v) / range) * (H - pad * 2);
+      return `${x},${y}`;
+    }).join(" ");
+
+    // Detect which value changed for summary
+    const estChanged  = est[est.length-1]  !== est[0];
+    const lowChanged  = low[low.length-1]  !== low[0];
+    const summaryVals = estChanged ? est : lowChanged ? low : high;
+    const summaryLabel = estChanged ? "Est" : lowChanged ? "Low" : "High";
+    const diff = summaryVals[summaryVals.length-1] - summaryVals[0];
+    const pct  = summaryVals[0] > 0 ? ((diff / summaryVals[0]) * 100).toFixed(1) : null;
+    const diffColor = diff > 0 ? "#4ade80" : diff < 0 ? "#f87171" : "var(--dim)";
+    const arrow = diff > 0 ? "↑" : diff < 0 ? "↓" : "";
+
+    const summaryHtml = diff !== 0 && pct !== null
+      ? `<span style="color:${diffColor};font-size:13px;font-weight:500">${arrow} ${summaryLabel}: $${Math.abs(diff).toFixed(2)} (${diff > 0 ? "+" : ""}${pct}%)</span>`
+      : `<span style="color:var(--dim);font-size:12px">No change</span>`;
+
+    return `
+      <div class="section-head"><span class="section-label">Value History</span></div>
+      <div style="margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+        <div style="display:flex;gap:12px;font-size:11px;color:var(--dim)">
+          <span><span style="color:#60a5fa">—</span> Low</span>
+          <span><span style="color:var(--purpleL)">—</span> Est</span>
+          <span><span style="color:#4ade80">—</span> High</span>
+          <span style="color:var(--dim)">${history.length} snapshots</span>
+        </div>
+        ${summaryHtml}
+      </div>
+      <svg width="100%" viewBox="0 0 ${W} ${H}" style="display:block;background:rgba(0,0,0,0.25);border-radius:8px">
+        ${low.some(v => v > 0)  ? `<polyline points="${toPoints(low)}"  fill="none" stroke="#60a5fa"      stroke-width="1.5" stroke-linejoin="round"/>` : ""}
+        ${est.some(v => v > 0)  ? `<polyline points="${toPoints(est)}"  fill="none" stroke="#a78bfa"      stroke-width="1.5" stroke-linejoin="round"/>` : ""}
+        ${high.some(v => v > 0) ? `<polyline points="${toPoints(high)}" fill="none" stroke="#4ade80"      stroke-width="1.5" stroke-linejoin="round"/>` : ""}
+        <text x="${pad}" y="${H-3}" font-size="9" fill="var(--dim)">$${minV.toFixed(0)}</text>
+        <text x="${W-pad}" y="${H-3}" font-size="9" fill="var(--dim)" text-anchor="end">$${maxV.toFixed(0)}</text>
+      </svg>`;
+  }
+
+  async function openDetail(id) {
+    const overlay = document.getElementById("overlay");
+    const panel   = document.getElementById("detailPanel");
+    panel.innerHTML = `<div class="drag-handle"></div><div class="center"><p>Loading…</p></div>`;
+    overlay.classList.add("open");
+    document.body.style.overflow = "hidden";
+
+    try {
+      const [res, histRes, cachedRes] = await Promise.all([
+        fetch(`/api/records/${id}`),
+        fetch(`/api/records/${id}/value-history`),
+        fetch(`/api/lyrics/cached/${id}`)
+      ]);
+      const data = await res.json();
+      const histData = await histRes.json();
+      const cachedData = await cachedRes.json();
+      if (!data.ok) throw new Error(data.error);
+      const r = data.record;
+      const history = histData.ok ? histData.history : [];
+      const cachedLyrics = new Set(cachedData.ok ? cachedData.cached : []);
+
+      const allImages = (r.images||[]).filter(Boolean);
+      const cover     = allImages[0] || null;
+      const tracks    = (r.tracks||[]).filter(t => t.title);
+      const dur       = totalDur(r.tracks);
+
+      const metaPills = [
+        r.year,
+        r.country,
+        r.format && `${r.discs > 1 ? `${r.discs}×` : ""}${r.format}`,
+        r.genre,
+        r.style,
+        tracks.length > 0 && `${tracks.length} tracks`,
+        dur && `${dur} total`,
+        r.rpm && `${r.rpm} RPM`,
+        r.record_size,
+      ].filter(Boolean).map(v => `<span class="meta-pill">${esc(String(v))}</span>`).join("");
+
+      const condBadges = [
+        r.vinyl_cond  && `<span class="pill" style="background:rgba(124,58,237,0.15);color:#a78bfa">Vinyl: ${r.vinyl_cond}</span>`,
+        r.jacket_cond && `<span class="pill" style="background:rgba(59,130,246,0.15);color:#93c5fd">Jacket: ${r.jacket_cond}</span>`,
+      ].filter(Boolean).join("");
+
+      const trackRows = tracks.map((t, i) => {
+        const s = (parseInt(t.mins)||0)*60+(parseInt(t.secs)||0);
+        const d = s ? `${t.mins||0}:${String(t.secs||0).padStart(2,"00")}` : "";
+        const hasLyrics = cachedLyrics.has(i);
+        return `<div class="track-row">
+          <span class="track-num">${i+1}</span>
+          <span class="track-title">${esc(t.title)}</span>
+          ${d ? `<span class="track-dur">${d}</span>` : ""}
+          ${hasLyrics ? `<button class="track-lyrics-btn" onclick="event.stopPropagation();openLyricsModal(${r.id},${i},'${esc(t.title).replace(/'/g,"\\'")}','${esc(r.artist||"").replace(/'/g,"\\'")}','${esc(r.title||"").replace(/'/g,"\\'")}')">Lyrics</button>` : ""}
+        </div>`;
+      }).join("");
+
+      const galleryHtml = allImages.length > 1
+        ? `<div class="section-head"><span class="section-label">Photos</span></div>
+           <div class="image-gallery">
+             ${allImages.map(img => `<img src="${img}" alt="" loading="lazy" onclick="openLightbox(event,'${img.substring(0,30)}...')" />`).join("")}
+           </div>`
+        : "";
+
+      panel.innerHTML = `
+        <div class="drag-handle"></div>
+        <div class="detail-close-row">
+          <button class="close-btn" onclick="closeDetail()">✕</button>
+        </div>
+        <div class="detail-hero">
+          <div class="detail-cover" ${cover ? `onclick="openLightboxFull('${id}')"` : ""} style="${cover ? 'cursor:zoom-in' : ''}">
+            ${cover ? `<img src="${cover}" alt=""/>` : `<div class="card-vinyl" style="width:65%;aspect-ratio:1/1"></div>`}
+          </div>
+          <div style="flex:1;min-width:0">
+            <div class="detail-title">${esc(r.title||"Untitled")}</div>
+            <div class="detail-artist">${esc(r.artist||"")}</div>
+            ${r.label ? `<div class="detail-label">${esc(r.label)}${r.cat_no ? ` · ${r.cat_no}` : ""}</div>` : ""}
+            <div class="detail-meta-pills">${metaPills}</div>
+            ${r.rating > 0 ? `<div style="margin-top:8px;color:#f59e0b;font-size:18px">${"★".repeat(r.rating)}</div>` : ""}
+            ${condBadges ? `<div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:8px">${condBadges}</div>` : ""}
+          </div>
+        </div>
+        <div class="detail-body">
+          ${galleryHtml}
+          ${buildValueChart(history)}
+          ${tracks.length > 0 ? `
+            <div class="section-head"><span class="section-label">Track listing</span></div>
+            <div class="tracklist">${trackRows}</div>` : ""}
+          ${r.notes ? `
+            <div class="section-head"><span class="section-label">Notes</span></div>
+            <p style="font-size:14px;color:#94a3b8;line-height:1.7;white-space:pre-wrap">${esc(r.notes)}</p>` : ""}
+          ${r.location ? `
+            <div class="section-head"><span class="section-label">Location</span></div>
+            <p style="font-size:14px;color:#94a3b8">${esc(r.location)}</p>` : ""}
+        </div>`;
+
+      // Store images for lightbox navigation
+      window._detailImages = allImages;
+    } catch (e) {
+      panel.innerHTML = `<div class="drag-handle"></div><div class="center"><p>Error: ${e.message}</p></div>`;
+    }
+  }
+
+  function openLightbox(e, src) {
+    e.stopPropagation();
+    // Find full src from the img element
+    const img = e.target;
+    document.getElementById("lightboxImg").src = img.src;
+    document.getElementById("lightbox").classList.add("open");
+  }
+
+  function openLightboxFull(id) {
+    const images = window._detailImages || [];
+    if (!images.length) return;
+    document.getElementById("lightboxImg").src = images[0];
+    document.getElementById("lightbox").classList.add("open");
+  }
+
+  function closeLightbox() {
+    document.getElementById("lightbox").classList.remove("open");
+  }
+
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById("overlay")) closeDetail();
+  }
+
+  function closeDetail() {
+    document.getElementById("overlay").classList.remove("open");
+    document.body.style.overflow = "";
+  }
+
+  // Keyboard support
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") {
+      if (document.getElementById("lightbox").classList.contains("open")) closeLightbox();
+      else closeDetail();
+    }
+  });
+
+  // Touch swipe down to close detail
+  let touchStartY = 0;
+  document.getElementById("detailPanel").addEventListener("touchstart", e => {
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+  document.getElementById("detailPanel").addEventListener("touchend", e => {
+    const delta = e.changedTouches[0].clientY - touchStartY;
+    if (delta > 80 && document.getElementById("detailPanel").scrollTop === 0) closeDetail();
+  }, { passive: true });
+
+  function esc(str) {
+    return String(str||"")
+      .replace(/&/g,"&amp;")
+      .replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;");
+  }
+
+  init();
+
+  async function openLyricsModal(recordId, trackIndex, trackTitle, artist, albumTitle) {
+    const overlay = document.getElementById("lyricsOverlay");
+    const body    = document.getElementById("lyricsBody");
+    const titleEl = document.getElementById("lyricsTrackTitle");
+    const metaEl  = document.getElementById("lyricsMeta");
+
+    titleEl.textContent = trackTitle || "Unknown Track";
+    metaEl.textContent  = [artist, albumTitle].filter(Boolean).join(" · ");
+    body.innerHTML = `<div class="lyrics-not-found">
+      <div class="lyrics-not-found-icon" style="animation:spin 2s linear infinite">🎵</div>
+      <p style="color:var(--muted);font-size:13px">Searching for lyrics…</p>
+    </div>`;
+    overlay.classList.add("open");
+    document.body.style.overflow = "hidden";
+
+    try {
+      const res  = await fetch(`/api/lyrics/${recordId}/${trackIndex}`);
+      const data = await res.json();
+
+      if (data.ok && data.lyrics) {
+        body.innerHTML = `
+          <pre class="lyrics-text">${esc(data.lyrics)}</pre>
+          <div class="lyrics-source">Source: ${esc(data.source || "")}</div>`;
+      } else {
+        body.innerHTML = `
+          <div class="lyrics-not-found">
+            <div class="lyrics-not-found-icon">🎵</div>
+            <p style="color:var(--text);font-size:14px;font-weight:500">No lyrics cached</p>
+            <p style="color:var(--muted);font-size:13px;max-width:280px;line-height:1.6">
+              Lyrics need to be fetched in the desktop app first. Open this record in Vinyl Crate Digger,
+              click Lyrics on a track to fetch and cache them, then they'll appear here.
+            </p>
+          </div>`;
+      }
+    } catch(e) {
+      body.innerHTML = `<div class="lyrics-not-found">
+        <p style="color:var(--muted)">Error loading lyrics: ${esc(e.message)}</p>
+      </div>`;
+    }
+  }
+
+  function closeLyricsModal() {
+    document.getElementById("lyricsOverlay").classList.remove("open");
+    document.body.style.overflow = "";
+  }
+
+  function handleLyricsOverlayClick(e) {
+    if (e.target === document.getElementById("lyricsOverlay")) closeLyricsModal();
+  }
+
+  // Close lyrics on Escape
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") {
+      if (document.getElementById("lyricsOverlay").classList.contains("open")) closeLyricsModal();
+    }
+  });
+
+</script>
+</body>
+</html>

@@ -1,0 +1,181 @@
+import { useState, useRef, useEffect } from "react";
+import { playNeedleDrop, startCrackle, stopCrackle } from "../sounds";
+import { C, VinylSVG } from "./shared";
+
+export default function NowPlaying({ onClose, initialRecord }) {
+  const [input, setInput] = useState("");
+  const [status, setStatus] = useState("idle"); // idle | found | notfound | loading
+  const [spinning, setSpinning] = useState(true);
+  const [rec, setRec] = useState(initialRecord || null);
+  const [activeTrack, setActiveTrack] = useState(null);
+  const [playCount, setPlayCount] = useState(null);
+  const inputRef = useRef();
+
+  useEffect(() => {
+    inputRef.current?.focus();
+    playNeedleDrop();
+    startCrackle();
+    if (initialRecord) setStatus("found");
+    return () => stopCrackle();
+  }, []);
+
+  const lookup = async () => {
+    const val = input.trim();
+    if (!val) return;
+    setStatus("loading");
+    const found = await window.api.findByBarcode(val);
+    if (found) {
+      setRec(found);
+      setStatus("found");
+      // Load play count for this record
+      window.api.getListeningHistory(found.id).then(h => setPlayCount(h.length));
+    }
+    else setStatus("notfound");
+  };
+
+  const handleKey = e => { if (e.key === "Enter") lookup(); };
+
+  const openDetail = () => {
+    if (rec) { window.api.openAlbumDetail(rec.id); onClose(); }
+  };
+
+  const cover = rec?.images?.find(Boolean);
+  const tracks = rec?.tracks || [];
+  const totalSecs = tracks.reduce((a,t)=>a+(parseInt(t.mins)||0)*60+(parseInt(t.secs)||0),0);
+  const dur = totalSecs ? `${Math.floor(totalSecs/60)}:${String(totalSecs%60).padStart(2,"0")}` : null;
+  const trackCount = tracks.filter(t=>t.title).length;
+
+  return (
+    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.82)", display: "flex",
+      alignItems: "flex-start", justifyContent: "center", zIndex: 400, overflowY: "auto", padding: "40px 16px" }}>
+      <div style={{ background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 14,
+        padding: "24px 28px", width: "100%", maxWidth: 480,
+        boxShadow: `0 0 80px rgba(124,58,237,0.3)`, marginBottom: 40 }}>
+
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+          <h2 style={{ margin: 0, fontSize: 16, fontWeight: 500, color: C.text }}>Now playing</h2>
+          <span onClick={onClose} style={{ cursor: "pointer", fontSize: 18, color: C.textMuted }}>✕</span>
+        </div>
+
+        {/* Scan input */}
+        <p style={{ fontSize: 12, color: C.textMuted, marginBottom: 10 }}>
+          Scan the barcode on your record to find it in your library.
+        </p>
+        <div style={{ display: "flex", gap: 8, marginBottom: 20 }}>
+          <input ref={inputRef} value={input} onChange={e => setInput(e.target.value)}
+            onKeyDown={handleKey} placeholder="Scan barcode…"
+            style={{ flex: 1, fontSize: 13, padding: "8px 12px",
+              border: `1px solid ${C.border}`, borderRadius: 7,
+              background: "rgba(255,255,255,0.05)", color: C.text, outline: "none" }}/>
+          <button onClick={lookup}
+            style={{ padding: "8px 18px", fontSize: 13, fontWeight: 500, border: "none",
+              borderRadius: 7, cursor: "pointer",
+              background: `linear-gradient(135deg,${C.purple},${C.blueMid})`, color: "#fff" }}>
+            Find
+          </button>
+        </div>
+
+        {/* States */}
+        {status === "loading" && (
+          <div style={{ textAlign: "center", padding: "20px 0" }}>
+            <div style={{ display: "inline-block", animation: "spin 1.5s linear infinite" }}>
+              <VinylSVG size={60}/>
+            </div>
+            <style>{`@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}} @keyframes spinSlow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
+          </div>
+        )}
+
+        {status === "notfound" && (
+          <div style={{ textAlign: "center", padding: "16px", background: "rgba(248,113,113,0.08)",
+            border: "1px solid rgba(248,113,113,0.2)", borderRadius: 10 }}>
+            <p style={{ margin: 0, fontSize: 13, color: "#f87171" }}>Record not found in your library.</p>
+            <p style={{ margin: "6px 0 0", fontSize: 12, color: C.textMuted }}>Try adding it first using the Discogs lookup.</p>
+          </div>
+        )}
+
+        {status === "found" && rec && (
+          <div style={{ background: "rgba(124,58,237,0.08)", border: `1px solid ${C.border}`,
+            borderRadius: 12, overflow: "hidden" }}>
+            <style>{`
+              @keyframes spinSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+              @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+            `}</style>
+            <div style={{ display: "flex", gap: 16, padding: "16px", alignItems: "center" }}>
+              {/* Cover art */}
+              {cover && (
+                <div style={{ width: 80, height: 80, flexShrink: 0, borderRadius: 8, overflow: "hidden",
+                  background: C.bgDeep, boxShadow: "0 4px 16px rgba(0,0,0,0.4)" }}>
+                  <img src={cover} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }}/>
+                </div>
+              )}
+              {/* Spinning vinyl */}
+              <div
+                onClick={() => setSpinning(s => !s)}
+                title={spinning ? "Click to pause" : "Click to spin"}
+                style={{
+                  flexShrink: 0, cursor: "pointer",
+                  animation: spinning ? "spinSlow 4s linear infinite" : "none",
+                  filter: spinning ? `drop-shadow(0 0 8px rgba(124,58,237,0.6))` : "none",
+                  transition: "filter 0.3s"
+                }}>
+                <VinylSVG size={80}/>
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <p style={{ margin: 0, fontSize: 15, fontWeight: 500, color: C.text }}>{rec.title}</p>
+                <p style={{ margin: "3px 0 0", fontSize: 13, color: C.textMuted }}>{rec.artist}</p>
+                <div style={{ display: "flex", gap: 10, marginTop: 8, flexWrap: "wrap" }}>
+                  {rec.year && <span style={{ fontSize: 11, color: C.textDim }}>{rec.year}</span>}
+                  {rec.genre && <span style={{ fontSize: 11, color: C.textDim }}>{rec.genre}</span>}
+                  {trackCount > 0 && <span style={{ fontSize: 11, color: C.textDim }}>{trackCount} tracks</span>}
+                  {dur && <span style={{ fontSize: 11, color: C.textDim }}>{dur}</span>}
+                  {rec.rating > 0 && <span style={{ fontSize: 11, color: C.gold }}>{"★".repeat(rec.rating)}</span>}
+                  {playCount > 0 && <span style={{ fontSize: 11, color: C.purpleLight }}>▶ {playCount} {playCount === 1 ? "play" : "plays"}</span>}
+                </div>
+                <div style={{ marginTop: 8 }}>
+                  <span style={{ fontSize: 11, color: spinning ? C.purpleLight : C.textDim, cursor: "pointer" }}
+                    onClick={() => setSpinning(s => !s)}>
+                    {spinning ? "⏸ Playing" : "▶ Paused"}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Track listing preview */}
+            {trackCount > 0 && (
+              <div style={{ borderTop: `1px solid ${C.border}`, padding: "12px 16px", maxHeight: 180, overflowY: "auto" }}>
+                {tracks.filter(t=>t.title).map((t, i) => {
+                  const secs = (parseInt(t.mins)||0)*60+(parseInt(t.secs)||0);
+                  const tdur = secs ? `${t.mins||0}:${String(t.secs||0).padStart(2,"0")}` : "";
+                  return (
+                    <div key={i}
+                      onClick={() => setActiveTrack(activeTrack === i ? null : i)}
+                      style={{ display: "flex", justifyContent: "space-between",
+                        padding: "6px 8px", marginBottom: 2, borderRadius: 6, cursor: "pointer",
+                        background: activeTrack === i ? `rgba(124,58,237,0.2)` : "transparent",
+                        border: activeTrack === i ? `1px solid ${C.purple}` : "1px solid transparent",
+                        transition: "all 0.15s" }}>
+                      <span style={{ fontSize: 12, color: activeTrack === i ? C.purpleLight : C.text }}>
+                        {activeTrack === i && <span style={{ marginRight: 6 }}>▶</span>}
+                        <span style={{ color: C.textDim, marginRight: 8 }}>{i+1}</span>{t.title}
+                      </span>
+                      {tdur && <span style={{ fontSize: 12, color: activeTrack === i ? C.purpleLight : C.textMuted, flexShrink: 0, marginLeft: 12 }}>{tdur}</span>}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            <div style={{ padding: "12px 16px", borderTop: `1px solid ${C.border}` }}>
+              <button onClick={openDetail}
+                style={{ width: "100%", padding: "8px", fontSize: 13, fontWeight: 500,
+                  border: "none", borderRadius: 7, cursor: "pointer",
+                  background: `linear-gradient(135deg,${C.purple},${C.blueMid})`, color: "#fff" }}>
+                Open full album detail
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

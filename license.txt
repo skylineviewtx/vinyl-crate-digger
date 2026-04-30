@@ -1,0 +1,150 @@
+VINYL LIBRARY
+END USER LICENSE AGREEMENT
+
+Last Updated: April 2026
+
+PLEASE READ THIS END USER LICENSE AGREEMENT ("AGREEMENT") CAREFULLY BEFORE
+INSTALLING OR USING VINYL LIBRARY. BY INSTALLING, COPYING, OR OTHERWISE USING
+THIS SOFTWARE, YOU AGREE TO BE BOUND BY THE TERMS OF THIS AGREEMENT. IF YOU DO
+NOT AGREE TO THESE TERMS, DO NOT INSTALL OR USE THE SOFTWARE.
+
+────────────────────────────────────────────────────────────────────────────────
+
+1. OWNERSHIP AND COPYRIGHT
+
+Vinyl Library ("Software") is the exclusive property of Clayton Kucera
+("Developer"). The Software is protected by copyright law and international
+treaty provisions. Clayton Kucera retains all intellectual property rights in
+and to the Software, including but not limited to all source code, object code,
+design, structure, organization, and documentation.
+
+All rights not expressly granted in this Agreement are reserved by Clayton Kucera.
+
+────────────────────────────────────────────────────────────────────────────────
+
+2. GRANT OF LICENSE
+
+Subject to the terms and conditions of this Agreement, Clayton Kucera grants you
+a limited, non-exclusive, non-transferable, revocable license to:
+
+  a) Install and use the Software on devices that you personally own or control.
+  b) Share the Software installer with friends and family members for their
+     personal, non-commercial use, provided this Agreement accompanies any such
+     distribution and no fee is charged.
+
+This license does not include the right to sublicense, sell, rent, lease, or
+otherwise transfer the Software or any rights in the Software to any third party
+beyond the terms stated above.
+
+────────────────────────────────────────────────────────────────────────────────
+
+3. RESTRICTIONS
+
+You may NOT:
+
+  a) Copy, modify, adapt, translate, reverse engineer, decompile, disassemble,
+     or create derivative works based on the Software or any part thereof.
+  b) Remove, alter, or obscure any copyright, trademark, or other proprietary
+     rights notices contained in or on the Software.
+  c) Use the Software for any commercial purpose or for any public display
+     (commercial or non-commercial) without prior written permission from
+     Clayton Kucera.
+  d) Distribute, publish, or make the Software available to the general public
+     through any means without prior written permission from Clayton Kucera.
+  e) Use the Software in any manner that could damage, disable, overburden, or
+     impair the Software or servers or networks connected to the Software.
+
+────────────────────────────────────────────────────────────────────────────────
+
+4. FUTURE VERSIONS AND PRICING
+
+The Software is currently provided free of charge. Clayton Kucera reserves the
+right to introduce pricing, subscription fees, or other charges for future
+versions or features of the Software. Continued use of any version following
+notice of such changes constitutes acceptance of the updated terms.
+
+You are not required to upgrade to any future version of the Software.
+
+────────────────────────────────────────────────────────────────────────────────
+
+5. YOUR DATA
+
+All data you enter into the Software — including record metadata, artwork, and
+account information — is stored locally on your device. Clayton Kucera does not
+collect, transmit, or have access to your personal data or collection data.
+
+You are solely responsible for maintaining backups of your data. Clayton Kucera
+is not responsible for any data loss.
+
+────────────────────────────────────────────────────────────────────────────────
+
+6. THIRD-PARTY SERVICES
+
+The Software may interact with third-party services including Discogs, MusicBrainz,
+and ListenBrainz. Your use of those services is governed by their respective terms
+of service and privacy policies. Clayton Kucera is not responsible for the
+availability, accuracy, or conduct of any third-party service.
+
+────────────────────────────────────────────────────────────────────────────────
+
+7. DISCLAIMER OF WARRANTIES
+
+THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. CLAYTON KUCERA DOES NOT WARRANT
+THAT THE SOFTWARE WILL BE ERROR-FREE, UNINTERRUPTED, OR FREE OF VIRUSES OR OTHER
+HARMFUL COMPONENTS.
+
+────────────────────────────────────────────────────────────────────────────────
+
+8. LIMITATION OF LIABILITY
+
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL CLAYTON
+KUCERA BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING BUT NOT LIMITED TO LOSS OF DATA, LOSS OF
+PROFITS, OR BUSINESS INTERRUPTION) ARISING OUT OF OR IN CONNECTION WITH THIS
+AGREEMENT OR THE USE OR INABILITY TO USE THE SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGES.
+
+────────────────────────────────────────────────────────────────────────────────
+
+9. CHANGES TO THIS AGREEMENT
+
+Clayton Kucera reserves the right to modify this Agreement at any time. Updated
+terms will be presented to you upon installation of any new version of the
+Software. Your continued use of the Software following notice of changes
+constitutes your acceptance of the revised Agreement. If you do not agree to the
+revised terms, you must discontinue use of the Software.
+
+────────────────────────────────────────────────────────────────────────────────
+
+10. TERMINATION
+
+This Agreement is effective until terminated. Your rights under this Agreement
+will terminate automatically and without notice if you fail to comply with any
+of its terms. Upon termination you must destroy all copies of the Software in
+your possession.
+
+────────────────────────────────────────────────────────────────────────────────
+
+11. GOVERNING LAW
+
+This Agreement shall be governed by and construed in accordance with the laws of
+the State of Texas, United States, without regard to its conflict of law
+provisions.
+
+────────────────────────────────────────────────────────────────────────────────
+
+12. ENTIRE AGREEMENT
+
+This Agreement constitutes the entire agreement between you and Clayton Kucera
+with respect to the Software and supersedes all prior or contemporaneous
+understandings, communications, or agreements, written or oral, regarding the
+Software.
+
+────────────────────────────────────────────────────────────────────────────────
+
+If you have questions about this Agreement, you may contact:
+Clayton Kucera — clayton@clayotnjkucera.com
+
+Copyright © 2026 Clayton Kucera. All rights reserved.

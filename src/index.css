@@ -1,0 +1,102 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --font-heading: "Orbitron", sans-serif;
+  --font-body: "Raleway", sans-serif;
+  --font-heading-size: 30px;
+}
+
+body {
+  font-family: var(--font-body);
+  background: #0d0d1a;
+  color: #e2e8f0;
+}
+
+/* ── 3D inset inputs — deeper recess ── */
+input[type="text"],
+input[type="password"],
+input[type="number"],
+input[type="email"],
+textarea,
+select {
+  box-shadow:
+    inset 0 3px 6px rgba(0,0,0,0.55),
+    inset 0 1px 3px rgba(0,0,0,0.4),
+    inset 0 0 0 1px rgba(0,0,0,0.2);
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+textarea:focus,
+select:focus {
+  box-shadow:
+    inset 0 3px 6px rgba(0,0,0,0.55),
+    inset 0 1px 3px rgba(0,0,0,0.4),
+    0 0 0 2px rgba(124,58,237,0.35),
+    0 0 12px rgba(124,58,237,0.15);
+}
+
+/* ── 3D raised buttons — physical with gradient sheen ── */
+button:not([style*="background: transparent"]):not([style*="background:transparent"]):not([style*="background:none"]) {
+  position: relative;
+  box-shadow:
+    0 4px 0 rgba(0,0,0,0.5),
+    0 6px 16px rgba(0,0,0,0.4),
+    inset 0 1px 0 rgba(255,255,255,0.2),
+    inset 1px 0 0 rgba(255,255,255,0.08),
+    inset 0 -1px 0 rgba(0,0,0,0.25);
+  transform: translateY(0);
+  transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.08s ease;
+  overflow: hidden;
+}
+
+/* Top highlight sheen overlay */
+button:not([style*="background: transparent"]):not([style*="background:transparent"]):not([style*="background:none"])::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.18) 0%,
+    rgba(255,255,255,0.06) 40%,
+    rgba(0,0,0,0.0)        60%,
+    rgba(0,0,0,0.15)       100%
+  );
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+button:not([style*="background: transparent"]):not([style*="background:transparent"]):not([style*="background:none"]):hover {
+  box-shadow:
+    0 5px 0 rgba(0,0,0,0.5),
+    0 9px 20px rgba(0,0,0,0.45),
+    inset 0 1px 0 rgba(255,255,255,0.25),
+    inset 1px 0 0 rgba(255,255,255,0.1),
+    inset 0 -1px 0 rgba(0,0,0,0.25);
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+}
+
+button:not([style*="background: transparent"]):not([style*="background:transparent"]):not([style*="background:none"]):active {
+  box-shadow:
+    0 1px 0 rgba(0,0,0,0.5),
+    0 2px 6px rgba(0,0,0,0.35),
+    inset 0 3px 6px rgba(0,0,0,0.35),
+    inset 0 1px 3px rgba(0,0,0,0.25);
+  transform: translateY(3px);
+  filter: brightness(0.92);
+}
+
+button:not([style*="background: transparent"]):not([style*="background:transparent"]):not([style*="background:none"]):active::after {
+  background: linear-gradient(
+    180deg,
+    rgba(0,0,0,0.1)        0%,
+    rgba(0,0,0,0.0)        40%,
+    rgba(255,255,255,0.05) 100%
+  );
+}

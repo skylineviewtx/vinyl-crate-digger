@@ -1,0 +1,9 @@
+node_modules/
+dist/
+dist-app/
+*.db
+*.log
+.env
+service-out.log
+service-err.log
+start-server.bat
