@@ -8,6 +8,7 @@ dist-app/
 *.db-wal
 *.db-shm
 *.csv
+*.bak
 backup*.json
 smtp-test.js
 

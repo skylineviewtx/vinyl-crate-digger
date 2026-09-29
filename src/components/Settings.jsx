@@ -126,7 +126,7 @@ export default function Settings({ user, role, onClose, onRefresh }) {
   const [parallaxScale, setParallaxScale] = useState(1.04);
   const [parallaxResponse, setParallaxResponse] = useState(0.08);
   const [parallaxReturn, setParallaxReturn] = useState(0.5);
-  const [importUsername, setImportUsername] = useState("Skylineview");
+  const [importUsername, setImportUsername] = useState("");
   const [importing, setImporting] = useState(false);
   const [importProgress, setImportProgress] = useState(null); // { current, total, status }
   const [importConflicts, setImportConflicts] = useState([]); // records that already exist
@@ -210,6 +210,8 @@ export default function Settings({ user, role, onClose, onRefresh }) {
       if (lbt) setLbToken(lbt);
       const gnt = await window.api.getSetting("genius_token");
       if (gnt) setGeniusToken(gnt);
+      const du = await window.api.getSetting("discogs_username");
+      if (du) setImportUsername(du);
       await loadSoundConfigs();
       setSoundCfgs(JSON.parse(JSON.stringify(getSoundConfigs())));
     })();
@@ -290,6 +292,7 @@ export default function Settings({ user, role, onClose, onRefresh }) {
   const startImport = async () => {
     const username = importUsername.trim();
     if (!username) return;
+    window.api.setSetting("discogs_username", username);
     setImporting(true);
     setImportProgress({ current: 0, total: 0, status: "Fetching collection…" });
     setImportConflicts([]);
