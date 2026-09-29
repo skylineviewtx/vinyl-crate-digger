@@ -817,6 +817,7 @@
               ${r.year   ? `<span class="pill">${r.year}</span>` : ""}
               ${r.genre  ? `<span class="pill">${esc(r.genre)}</span>` : ""}
               ${dur      ? `<span class="pill">${dur}</span>` : ""}
+              ${parseFloat(r.est_value) > 0 ? `<span class="pill" style="background:rgba(74,222,128,0.08);color:#4ade80;border-color:rgba(74,222,128,0.25)">Est: $${parseFloat(r.est_value).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2})}</span>` : ""}
               ${stars(r.rating)}
             </div>
           </div>
@@ -988,6 +989,12 @@
             <div class="detail-meta-pills">${metaPills}</div>
             ${r.rating > 0 ? `<div style="margin-top:8px;color:#f59e0b;font-size:18px">${"★".repeat(r.rating)}</div>` : ""}
             ${condBadges ? `<div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:8px">${condBadges}</div>` : ""}
+            ${(r.low_value || r.est_value || r.high_value) ? `
+              <div style="display:flex;gap:16px;margin-top:12px">
+                ${r.low_value ? `<div><div style="font-size:10px;color:#64748b;margin-bottom:2px">LOW</div><div style="font-size:13px;color:#e2e8f0">$${parseFloat(r.low_value).toFixed(2)}</div></div>` : ""}
+                ${r.est_value ? `<div><div style="font-size:10px;color:#64748b;margin-bottom:2px">EST</div><div style="font-size:14px;font-weight:500;color:#a78bfa">$${parseFloat(r.est_value).toFixed(2)}</div></div>` : ""}
+                ${r.high_value ? `<div><div style="font-size:10px;color:#64748b;margin-bottom:2px">HIGH</div><div style="font-size:13px;color:#e2e8f0">$${parseFloat(r.high_value).toFixed(2)}</div></div>` : ""}
+              </div>` : ""}
           </div>
         </div>
         <div class="detail-body">

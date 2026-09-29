@@ -23,6 +23,7 @@ contextBridge.exposeInMainWorld("api", {
   getValueHistory:      (id)            => ipcRenderer.invoke("records:getValueHistory", id),
   getListeningHistory:  (id)            => ipcRenderer.invoke("records:getListeningHistory", id),
   getListeningStats:    ()              => ipcRenderer.invoke("records:getListeningStats"),
+  clearListeningHistory: ()              => ipcRenderer.invoke("records:clearListeningHistory"),
   logPlay:              (id)            => ipcRenderer.invoke("records:logPlay", id),
   // Lyrics
   testGenius:           ()              => ipcRenderer.invoke("lyrics:testGenius"),

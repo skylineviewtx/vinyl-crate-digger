@@ -1,13 +1,21 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { C, VinylSVG, Stars, LabelBadge } from "./shared";
+import LyricsModal from "./LyricsModal";
 
 export default function AlbumDetail() {
   const [rec, setRec] = useState(null);
-  const [lightbox, setLightbox] = useState(null); // src string or null
+  const [lightbox, setLightbox] = useState(null);
+  const [lyricsTrack, setLyricsTrack] = useState(null);
+  const [cachedLyricsTracks, setCachedLyricsTracks] = useState(new Set());
 
   useEffect(() => {
-    window.api.onAlbumData(data => setRec(data));
+    window.api.onAlbumData(data => {
+      setRec(data);
+      if (data?.id) {
+        window.api.getCachedLyricsTracks(data.id).then(idxs => setCachedLyricsTracks(new Set(idxs || [])));
+      }
+    });
   }, []);
 
   if (!rec) return (
@@ -148,6 +156,16 @@ export default function AlbumDetail() {
                       textAlign: "right" }}>{i+1}</span>
                     <span style={{ flex: 1, fontSize: 13, color: C.text }}>{t.title}</span>
                     {tdur && <span style={{ fontSize: 12, color: C.textMuted, flexShrink: 0 }}>{tdur}</span>}
+                    <button onClick={() => setLyricsTrack({ index: i, title: t.title })}
+                      style={{ fontSize: 10, padding: "2px 8px",
+                        border: cachedLyricsTracks.has(i) ? `1px solid ${C.purple}` : "1px solid rgba(255,255,255,0.08)",
+                        borderRadius: 4,
+                        background: cachedLyricsTracks.has(i) ? `linear-gradient(135deg,${C.purple},${C.blueMid})` : "transparent",
+                        color: cachedLyricsTracks.has(i) ? "#fff" : "rgba(255,255,255,0.18)",
+                        cursor: "pointer", whiteSpace: "nowrap",
+                        boxShadow: cachedLyricsTracks.has(i) ? `0 0 8px rgba(124,58,237,0.4)` : "none" }}>
+                      Lyrics
+                    </button>
                   </div>
                 );
               })}
@@ -211,6 +229,19 @@ export default function AlbumDetail() {
           </div>
         )}
       </div>
+    {lyricsTrack && rec?.id && (
+      <LyricsModal
+        recordId={rec.id}
+        trackIndex={lyricsTrack.index}
+        trackTitle={lyricsTrack.title}
+        artist={rec.artist}
+        albumTitle={rec.title}
+        onClose={() => {
+          setLyricsTrack(null);
+          window.api.getCachedLyricsTracks(rec.id).then(idxs => setCachedLyricsTracks(new Set(idxs || [])));
+        }}
+      />
+    )}
     {lightbox && createPortal(
       <div onClick={() => setLightbox(null)}
         style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh",

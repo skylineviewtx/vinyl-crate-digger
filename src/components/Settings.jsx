@@ -95,6 +95,7 @@ export default function Settings({ user, role, onClose, onRefresh }) {
   const [listLocations, setListLocations] = useState([]);
   const [listInput,     setListInput]     = useState({ genres:"", styles:"", formats:"", locations:"" });
   const [listMsg,       setListMsg]       = useState("");
+  const [clearHistoryMsg, setClearHistoryMsg] = useState("");
   const [pwForm, setPwForm] = useState({ old: "", next: "", confirm: "" });
   const [pwMsg, setPwMsg] = useState("");
   const [profile, setProfile] = useState({ firstName: "", lastName: "", email: "" });
@@ -600,6 +601,31 @@ export default function Settings({ user, role, onClose, onRefresh }) {
                 </div>
               ))}
               {listMsg && <p style={{ fontSize: 12, color: "#4ade80", margin: "4px 0 0" }}>{listMsg}</p>}
+
+              {role === "admin" && (
+                <div style={{ marginTop: 28 }}>
+                  <SectionHead title="Danger zone" />
+                  <div style={{ background: "rgba(248,113,113,0.06)", border: "1px solid rgba(248,113,113,0.2)",
+                    borderRadius: 10, padding: "14px 16px", display: "flex", alignItems: "center",
+                    justifyContent: "space-between", gap: 12 }}>
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 500, color: "#f87171" }}>Clear listening history</div>
+                      <div style={{ fontSize: 12, color: C.textDim, marginTop: 2 }}>Permanently deletes all play history. Cannot be undone.</div>
+                    </div>
+                    <button onClick={async () => {
+                      if (!confirm("Are you sure? This will permanently delete all listening history.")) return;
+                      await window.api.clearListeningHistory();
+                      setClearHistoryMsg("Listening history cleared.");
+                      setTimeout(() => setClearHistoryMsg(""), 3000);
+                    }} style={{ padding: "7px 16px", border: "1px solid rgba(248,113,113,0.4)",
+                      borderRadius: 7, background: "rgba(248,113,113,0.1)",
+                      color: "#f87171", cursor: "pointer", fontSize: 12, whiteSpace: "nowrap", flexShrink: 0 }}>
+                      Clear history
+                    </button>
+                  </div>
+                  {clearHistoryMsg && <p style={{ fontSize: 12, color: "#4ade80", margin: "8px 0 0" }}>{clearHistoryMsg}</p>}
+                </div>
+              )}
             </div>
           )}
 
