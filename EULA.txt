@@ -1,40 +1,46 @@
-VINYL LIBRARY
+VINYL CRATE DIGGER
 END USER LICENSE AGREEMENT
 
-Last Updated: April 2026
+Last Updated: September 2026
 
 PLEASE READ THIS END USER LICENSE AGREEMENT ("AGREEMENT") CAREFULLY BEFORE
-INSTALLING OR USING VINYL LIBRARY. BY INSTALLING, COPYING, OR OTHERWISE USING
-THIS SOFTWARE, YOU AGREE TO BE BOUND BY THE TERMS OF THIS AGREEMENT. IF YOU DO
-NOT AGREE TO THESE TERMS, DO NOT INSTALL OR USE THE SOFTWARE.
+INSTALLING OR USING VINYL CRATE DIGGER. BY INSTALLING, COPYING, OR OTHERWISE
+USING THIS SOFTWARE, YOU AGREE TO BE BOUND BY THE TERMS OF THIS AGREEMENT. IF
+YOU DO NOT AGREE TO THESE TERMS, DO NOT INSTALL OR USE THE SOFTWARE.
 
 ────────────────────────────────────────────────────────────────────────────────
 
 1. OWNERSHIP AND COPYRIGHT
 
-Vinyl Library ("Software") is the exclusive property of Clayton Kucera
+Vinyl Crate Digger ("Software") is the property of Clayton Kucera
 ("Developer"). The Software is protected by copyright law and international
 treaty provisions. Clayton Kucera retains all intellectual property rights in
 and to the Software, including but not limited to all source code, object code,
 design, structure, organization, and documentation.
 
-All rights not expressly granted in this Agreement are reserved by Clayton Kucera.
+All rights not expressly granted in this Agreement or in the Source Code
+License (Section 2) are reserved by Clayton Kucera.
 
 ────────────────────────────────────────────────────────────────────────────────
 
 2. GRANT OF LICENSE
 
 Subject to the terms and conditions of this Agreement, Clayton Kucera grants you
-a limited, non-exclusive, non-transferable, revocable license to:
+a limited, non-exclusive, non-transferable license to:
 
   a) Install and use the Software on devices that you personally own or control.
-  b) Share the Software installer with friends and family members for their
-     personal, non-commercial use, provided this Agreement accompanies any such
+  b) Share the Software installer with others for their personal,
+     non-commercial use, provided this Agreement accompanies any such
      distribution and no fee is charged.
 
-This license does not include the right to sublicense, sell, rent, lease, or
-otherwise transfer the Software or any rights in the Software to any third party
-beyond the terms stated above.
+Source Code License. The source code for the Software is published separately
+under the PolyForm Noncommercial License 1.0.0
+(https://polyformproject.org/licenses/noncommercial/1.0.0) ("Source Code
+License"). The Source Code License allows you to use, study, modify, and share
+the source code for noncommercial purposes. Nothing in this Agreement limits the
+rights granted to you under the Source Code License. If this Agreement and the
+Source Code License conflict with respect to the source code, the Source Code
+License controls.
 
 ────────────────────────────────────────────────────────────────────────────────
 
@@ -42,17 +48,24 @@ beyond the terms stated above.
 
 You may NOT:
 
-  a) Copy, modify, adapt, translate, reverse engineer, decompile, disassemble,
-     or create derivative works based on the Software or any part thereof.
-  b) Remove, alter, or obscure any copyright, trademark, or other proprietary
-     rights notices contained in or on the Software.
-  c) Use the Software for any commercial purpose or for any public display
-     (commercial or non-commercial) without prior written permission from
-     Clayton Kucera.
-  d) Distribute, publish, or make the Software available to the general public
-     through any means without prior written permission from Clayton Kucera.
+  a) Use the Software, or any modified version of or work based on the
+     Software, for any commercial purpose without a separate written commercial
+     license from Clayton Kucera. Commercial purposes include, but are not
+     limited to, selling, licensing, or renting the Software; offering it as a
+     paid product, subscription, or hosted service; or including it in any
+     product or service offered for a fee.
+  b) Charge any fee for copies of the Software or of any modified version.
+  c) Remove, alter, or obscure any copyright notices, "Required Notice" lines,
+     license terms, or this Agreement contained in or distributed with the
+     Software.
+  d) Distribute a modified version of the Software in a way that suggests it is
+     the original Software or that it is made or endorsed by Clayton Kucera.
+     Modified versions must be clearly identified as modified.
   e) Use the Software in any manner that could damage, disable, overburden, or
-     impair the Software or servers or networks connected to the Software.
+     impair the Software or any servers or networks connected to the Software,
+     including third-party services the Software connects to.
+
+To request a commercial license, contact Clayton Kucera at the address below.
 
 ────────────────────────────────────────────────────────────────────────────────
 
@@ -60,8 +73,9 @@ You may NOT:
 
 The Software is currently provided free of charge. Clayton Kucera reserves the
 right to introduce pricing, subscription fees, or other charges for future
-versions or features of the Software. Continued use of any version following
-notice of such changes constitutes acceptance of the updated terms.
+versions or features of the Software. Any such charges apply only to those
+future versions or features. Versions you already have remain available to you
+under the terms they were released with.
 
 You are not required to upgrade to any future version of the Software.
 
@@ -80,10 +94,12 @@ is not responsible for any data loss.
 
 6. THIRD-PARTY SERVICES
 
-The Software may interact with third-party services including Discogs, MusicBrainz,
-and ListenBrainz. Your use of those services is governed by their respective terms
-of service and privacy policies. Clayton Kucera is not responsible for the
-availability, accuracy, or conduct of any third-party service.
+The Software may interact with third-party services including Discogs,
+MusicBrainz, ListenBrainz, Genius, and other lyrics providers. Your use of those
+services is governed by their respective terms of service and privacy policies.
+Any account tokens you provide for those services are stored locally on your
+device. Clayton Kucera is not responsible for the availability, accuracy, or
+conduct of any third-party service.
 
 ────────────────────────────────────────────────────────────────────────────────
 
@@ -110,20 +126,18 @@ POSSIBILITY OF SUCH DAMAGES.
 
 9. CHANGES TO THIS AGREEMENT
 
-Clayton Kucera reserves the right to modify this Agreement at any time. Updated
-terms will be presented to you upon installation of any new version of the
-Software. Your continued use of the Software following notice of changes
-constitutes your acceptance of the revised Agreement. If you do not agree to the
-revised terms, you must discontinue use of the Software.
+Clayton Kucera may update this Agreement for future versions of the Software.
+Updated terms will be presented to you when you install a new version. If you do
+not agree to the updated terms, do not install that version.
 
 ────────────────────────────────────────────────────────────────────────────────
 
 10. TERMINATION
 
 This Agreement is effective until terminated. Your rights under this Agreement
-will terminate automatically and without notice if you fail to comply with any
-of its terms. Upon termination you must destroy all copies of the Software in
-your possession.
+will terminate if you fail to comply with any of its terms. Upon termination you
+must stop using the Software and destroy all copies of it in your possession.
+Termination of rights to the source code is governed by the Source Code License.
 
 ────────────────────────────────────────────────────────────────────────────────
 
@@ -137,14 +151,15 @@ provisions.
 
 12. ENTIRE AGREEMENT
 
-This Agreement constitutes the entire agreement between you and Clayton Kucera
-with respect to the Software and supersedes all prior or contemporaneous
-understandings, communications, or agreements, written or oral, regarding the
-Software.
+This Agreement, together with the Source Code License, constitutes the entire
+agreement between you and Clayton Kucera with respect to the Software and
+supersedes all prior or contemporaneous understandings, communications, or
+agreements, written or oral, regarding the Software.
 
 ────────────────────────────────────────────────────────────────────────────────
 
-If you have questions about this Agreement, you may contact:
-Clayton Kucera — clayton@clayotnjkucera.com
+If you have questions about this Agreement, or would like a commercial license,
+contact:
+Clayton Kucera — clayton@claytonjkucera.com
 
-Copyright © 2026 Clayton Kucera. All rights reserved.
+Copyright © 2026 Clayton Kucera.
