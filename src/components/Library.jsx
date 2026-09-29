@@ -46,6 +46,9 @@ export default function Library({ user, role, onLogout }) {
   const [theme, setThemeState] = useState("dark");
   const [headingSize, setHeadingSizeState] = useState(30);
   const gridRef = React.useRef(null);
+  const searchRef = React.useRef(null);
+  const focusSearch = () => setTimeout(() => searchRef.current ? searchRef.current.focus() : window.focus(), 50);
+
 
   useEffect(() => {
     load();
@@ -84,7 +87,7 @@ export default function Library({ user, role, onLogout }) {
 
 
   const load = async () => { setRecords(await window.api.getRecords()); setLoadKey(k => k + 1); };
-  const save = async (record) => { await window.api.saveRecord(record); await load(); setEditRecord(null); record.id ? playSave() : playAdd(); };
+  const save = async (record) => { await window.api.saveRecord(record); await load(); setEditRecord(null); focusSearch(); record.id ? playSave() : playAdd(); };
   const del = async (id) => { if (confirm("Remove this record?")) { await window.api.deleteRecord(id); await load(); playDelete(); } };
   const exportCSV = async () => { const r = await window.api.exportCSV(); if (r.ok) alert("Export saved."); };
   const toggleSelect = (id) => setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
@@ -123,23 +126,21 @@ export default function Library({ user, role, onLogout }) {
   const [nowPlayingRecord, setNowPlayingRecord] = useState(null);
   const openNowPlaying = (rec = null) => { setNowPlayingRecord(rec); setOpenModal(MODAL_NOWPLAYING); };
   const closeModal = () => {
-    setOpenModal(MODAL_NONE);
-    setTimeout(() => {
-      const searchInput = document.querySelector('input[placeholder="Search artist or title…"]');
-      if (searchInput) searchInput.focus();
-      else window.focus();
-    }, 50);
-  };
+      setOpenModal(MODAL_NONE);
+      focusSearch();
+    };
 
   const genres = [...new Set(records.map(r => r.genre?.trim()).filter(Boolean))].sort();
   const filtered = records
     .filter(r => {
       const q = search.toLowerCase();
+      const isBarcode = /^[\d\s-]{6,}$/.test(search.trim());
       const genreMatch = !filterGenre || r.genre?.trim().toLowerCase() === filterGenre.trim().toLowerCase();
       const formatMatch = !filterFormat || r.format?.trim().toLowerCase() === filterFormat.trim().toLowerCase();
       const condMatch = !filterCondition || r.vinyl_cond === filterCondition;
       const ratedMatch = !filterRated || r.rating > 0;
-      return (!q || r.artist?.toLowerCase().includes(q) || r.title?.toLowerCase().includes(q))
+      return (!q || r.artist?.toLowerCase().includes(q) || r.title?.toLowerCase().includes(q)
+        || (isBarcode && (r.barcode || "").replace(/\D/g, "").includes(search.replace(/\D/g, ""))))
         && genreMatch && formatMatch && condMatch && ratedMatch;
     })
     .sort((a, b) =>
@@ -148,10 +149,12 @@ export default function Library({ user, role, onLogout }) {
       sortBy === "artist" ? (a.artist||"").localeCompare(b.artist||"") :
       b.id - a.id
     );
+    useEffect(() => { setFocusedId(null); }, [search]);
   // Keyboard navigation — separate effect so it can depend on live state
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (editRecord || openModal) return;
+      if (e.key === "Enter" && e.target.closest?.("input, textarea, select")) return;
       if (view !== "grid") return;
       const ids = filtered.map(r => r.id);
       if (!ids.length) return;
@@ -354,8 +357,8 @@ export default function Library({ user, role, onLogout }) {
                   style={{ cursor: "pointer", color: C.textMuted, fontSize: 13 }}>✕</span>
               </div>
             )}
-            <input value={search} onChange={e => setSearch(e.target.value)}
-              placeholder="Search artist or title…"
+            <input ref={searchRef} value={search} onChange={e => setSearch(e.target.value)}
+              placeholder="Search artist or title, or scan a barcode…"
               style={{ fontSize: 13, padding: "7px 12px", border: `1px solid ${C.border}`, borderRadius: 6,
                 background: "rgba(255,255,255,0.05)", color: C.text, minWidth: 180, flex: 1, outline: "none" }}/>
             <select value={filterGenre} onChange={e => setFilterGenre(e.target.value)}
@@ -483,7 +486,7 @@ export default function Library({ user, role, onLogout }) {
 
       {/* Record edit modal — separate from main modal system */}
       {editRecord && (
-        <RecordModal record={editRecord} user={user} onSave={save} onClose={() => setEditRecord(null)}
+        <RecordModal record={editRecord} user={user} onSave={save} onClose={() => { setEditRecord(null); focusSearch(); }}
           onNowPlaying={rec => { setEditRecord(null); openNowPlaying(rec); }} />
       )}
 
@@ -493,7 +496,7 @@ export default function Library({ user, role, onLogout }) {
           records={records}
           selectedIds={selectedIds}
           onSave={async () => { await load(); setSelectedIds([]); setBulkMode(false); }}
-          onClose={() => setShowBulkEdit(false)}/>
+          onClose={() => { setShowBulkEdit(false); focusSearch(); }}/>
       )}
 
       {/* Main modal switcher — only one renders at a time */}
