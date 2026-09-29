@@ -61,7 +61,6 @@ function signData(str) {
 // ── Password policy ───────────────────────────────────────────────────────────
 function validatePassword(password) {
   if (!password || password.length < 6) return "Password must be at least 6 characters.";
-  if (!/[0-9]|[^A-Za-z0-9\s]/.test(password)) return "Password must include at least one number or special character.";
   return null;
 }
 
@@ -94,7 +93,6 @@ function requireSession(event, requiredRole = null) {
 }
 
 function initDB() {
-  fs.mkdirSync(userDataPath, { recursive: true });
   db = new Database(dbPath);
   db.pragma("journal_mode = WAL");
 
@@ -142,7 +140,7 @@ function initDB() {
   // ── Versioned migrations ─────────────────────────────────────────────────
   // Each migration runs exactly once. To add a new schema change, append a
   // new entry to the MIGRATIONS array and increment CURRENT_VERSION.
-  const CURRENT_VERSION = 8;
+  const CURRENT_VERSION = 7;
 
   const migrations = [
     // v1 — initial columns missing from early builds
@@ -206,10 +204,6 @@ function initDB() {
         FOREIGN KEY (record_id) REFERENCES records(id) ON DELETE CASCADE
       )`);
     },
-    // v8 — per-user password recovery code
-    () => {
-      db.exec("ALTER TABLE users ADD COLUMN recovery_hash TEXT DEFAULT ''");
-    },
   ];
 
   // Pre-flight: ensure critical columns exist regardless of migration version
@@ -227,7 +221,6 @@ function initDB() {
     "ALTER TABLE records ADD COLUMN rpm TEXT DEFAULT ''",
     "ALTER TABLE records ADD COLUMN style TEXT DEFAULT ''",
     "ALTER TABLE records ADD COLUMN channels TEXT DEFAULT ''",
-    "ALTER TABLE users ADD COLUMN recovery_hash TEXT DEFAULT ''",
   ];
   for (const sql of criticalFixes) {
     try { db.exec(sql); } catch {}
@@ -418,43 +411,6 @@ ipcMain.handle("auth:changePassword", (event, { username, oldPassword, newPasswo
   if (pwErr) return { ok: false, error: pwErr };
   const user = db.prepare("SELECT * FROM users WHERE username = ?").get(username);
   if (!user || !bcrypt.compareSync(oldPassword, user.password_hash)) return { ok: false, error: "Current password is incorrect." };
-  db.prepare("UPDATE users SET password_hash = ?, must_change_password = 0 WHERE username = ?").run(bcrypt.hashSync(newPassword, 10), username);
-  return { ok: true };
-});
-
-// ── Recovery codes ────────────────────────────────────────────────────────────
-const RECOVERY_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no 0/O/1/I
-
-function normalizeRecoveryCode(code) {
-  return String(code || "").toUpperCase().replace(/[\s-]/g, "");
-}
-
-ipcMain.handle("auth:generateRecoveryCode", (event) => {
-  const session = requireSession(event);
-  let raw = "";
-  for (let i = 0; i < 16; i++) {
-    raw += RECOVERY_ALPHABET[crypto.randomInt(RECOVERY_ALPHABET.length)];
-  }
-  db.prepare("UPDATE users SET recovery_hash = ? WHERE username = ?").run(bcrypt.hashSync(raw, 10), session.username);
-  const display = raw.match(/.{4}/g).join("-");
-  return { ok: true, code: display };
-});
-
-ipcMain.handle("auth:hasRecoveryCode", (event) => {
-  const session = requireSession(event);
-  const user = db.prepare("SELECT recovery_hash FROM users WHERE username = ?").get(session.username);
-  return { ok: true, hasCode: !!(user && user.recovery_hash) };
-});
-
-// No session required — used from the login screen.
-ipcMain.handle("auth:resetWithRecoveryCode", (event, { username, code, newPassword }) => {
-  const pwErr = validatePassword(newPassword);
-  if (pwErr) return { ok: false, error: pwErr };
-  const genericError = "Username or recovery code is incorrect.";
-  const user = db.prepare("SELECT * FROM users WHERE username = ?").get(username);
-  if (!user || !user.recovery_hash) return { ok: false, error: genericError };
-  const normalized = normalizeRecoveryCode(code);
-  if (!normalized || !bcrypt.compareSync(normalized, user.recovery_hash)) return { ok: false, error: genericError };
   db.prepare("UPDATE users SET password_hash = ?, must_change_password = 0 WHERE username = ?").run(bcrypt.hashSync(newPassword, 10), username);
   return { ok: true };
 });

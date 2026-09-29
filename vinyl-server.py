@@ -32,8 +32,8 @@ def row_to_dict(row):
     return d
 
 def safe_record(r):
-    """Return record without pricing info"""
-    return {k: v for k, v in r.items() if k not in ("low_value", "est_value", "high_value")}
+    """Return record - all fields included"""
+    return dict(r)
 
 class Handler(BaseHTTPRequestHandler):
 

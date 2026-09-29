@@ -5,6 +5,9 @@ contextBridge.exposeInMainWorld("api", {
   login:                (creds)         => ipcRenderer.invoke("auth:login", creds),
   logout:               ()              => ipcRenderer.invoke("auth:logout"),
   changePassword:       (data)          => ipcRenderer.invoke("auth:changePassword", data),
+  generateRecoveryCode: ()              => ipcRenderer.invoke("auth:generateRecoveryCode"),
+  hasRecoveryCode:      ()              => ipcRenderer.invoke("auth:hasRecoveryCode"),
+  resetWithRecoveryCode:(data)          => ipcRenderer.invoke("auth:resetWithRecoveryCode", data),
   // Settings
   getSetting:           (key)           => ipcRenderer.invoke("settings:get", key),
   setSetting:           (key, value)    => ipcRenderer.invoke("settings:set", { key, value }),
@@ -23,6 +26,7 @@ contextBridge.exposeInMainWorld("api", {
   getValueHistory:      (id)            => ipcRenderer.invoke("records:getValueHistory", id),
   getListeningHistory:  (id)            => ipcRenderer.invoke("records:getListeningHistory", id),
   getListeningStats:    ()              => ipcRenderer.invoke("records:getListeningStats"),
+  clearListeningHistory: ()              => ipcRenderer.invoke("records:clearListeningHistory"),
   logPlay:              (id)            => ipcRenderer.invoke("records:logPlay", id),
   // Lyrics
   testGenius:           ()              => ipcRenderer.invoke("lyrics:testGenius"),

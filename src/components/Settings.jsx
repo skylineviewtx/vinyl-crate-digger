@@ -95,8 +95,12 @@ export default function Settings({ user, role, onClose, onRefresh }) {
   const [listLocations, setListLocations] = useState([]);
   const [listInput,     setListInput]     = useState({ genres:"", styles:"", formats:"", locations:"" });
   const [listMsg,       setListMsg]       = useState("");
+  const [clearHistoryMsg, setClearHistoryMsg] = useState("");
   const [pwForm, setPwForm] = useState({ old: "", next: "", confirm: "" });
   const [pwMsg, setPwMsg] = useState("");
+  const [hasRecovery, setHasRecovery] = useState(false);
+  const [recoveryCode, setRecoveryCode] = useState("");
+  const [recoveryMsg, setRecoveryMsg] = useState("");
   const [profile, setProfile] = useState({ firstName: "", lastName: "", email: "" });
   const [lastLogin, setLastLogin] = useState(null);
   const [profileMsg, setProfileMsg] = useState("");
@@ -156,6 +160,12 @@ export default function Settings({ user, role, onClose, onRefresh }) {
         }
       }).catch(() => {});
       window.api.getSetting("welcome_greeting").then(g => { if (g) setCustomGreeting(g); });
+      window.api.hasRecoveryCode && window.api.hasRecoveryCode().then(res => {
+        if (res?.ok) setHasRecovery(res.hasCode);
+      }).catch(() => {});
+    } else {
+      // Clear the one-time code when leaving the tab
+      setRecoveryCode(""); setRecoveryMsg("");
     }
   }, [tab]);
   useEffect(() => {
@@ -231,6 +241,22 @@ export default function Settings({ user, role, onClose, onRefresh }) {
     const res = await window.api.changePassword({ username: user, oldPassword: pwForm.old, newPassword: pwForm.next });
     setPwMsg(res.ok ? "Password updated successfully." : res.error);
     if (res.ok) setPwForm({ old: "", next: "", confirm: "" });
+  };
+
+  const generateRecovery = async () => {
+    if (hasRecovery && !confirm("This replaces your current code. The old one will stop working.")) return;
+    setRecoveryMsg("");
+    const res = await window.api.generateRecoveryCode();
+    if (res.ok) { setRecoveryCode(res.code); setHasRecovery(true); }
+    else setRecoveryMsg(res.error || "Failed to generate code.");
+  };
+
+  const copyRecovery = async () => {
+    try {
+      await navigator.clipboard.writeText(recoveryCode);
+      setRecoveryMsg("Copied to clipboard.");
+      setTimeout(() => setRecoveryMsg(""), 3000);
+    } catch { setRecoveryMsg("Copy failed — write it down instead."); }
   };
 
   const saveDiscogsToken = async () => {
@@ -517,6 +543,35 @@ export default function Settings({ user, role, onClose, onRefresh }) {
                 color: pwMsg.includes("success") ? "#4ade80" : "#f87171" }}>{pwMsg}</p>}
               <button onClick={changePw} style={{ ...actionBtn(), marginTop: 16 }}>Update password</button>
 
+              <SectionHead title="Recovery code" />
+              <p style={{ fontSize: 13, color: C.textMuted, marginBottom: 10, lineHeight: 1.6 }}>
+                A recovery code lets you reset your password from the login screen if you forget it.
+                It stays valid until you generate a new one.
+              </p>
+              <p style={{ fontSize: 12, color: hasRecovery ? "#4ade80" : C.textDim, marginBottom: 12 }}>
+                {hasRecovery ? "A recovery code is set" : "No recovery code set"}
+              </p>
+              {recoveryCode && (
+                <div style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${C.border}`,
+                  borderRadius: 8, padding: "14px 16px", marginBottom: 12 }}>
+                  <div style={{ fontFamily: "monospace", fontSize: 20, letterSpacing: "0.1em",
+                    color: C.text, textAlign: "center", marginBottom: 10, userSelect: "all" }}>
+                    {recoveryCode}
+                  </div>
+                  <p style={{ fontSize: 12, color: "#fbbf24", margin: "0 0 10px", textAlign: "center" }}>
+                    Write this down. It won't be shown again.
+                  </p>
+                  <div style={{ textAlign: "center" }}>
+                    <button onClick={copyRecovery} style={actionBtn("rgba(255,255,255,0.06)")}>Copy</button>
+                  </div>
+                </div>
+              )}
+              {recoveryMsg && <p style={{ margin: "0 0 10px", fontSize: 12,
+                color: recoveryMsg.includes("Copied") ? "#4ade80" : "#f87171" }}>{recoveryMsg}</p>}
+              <button onClick={generateRecovery} style={actionBtn()}>
+                {hasRecovery ? "Generate new code" : "Generate recovery code"}
+              </button>
+
               {role === "admin" && (
                 <>
                   <SectionHead title="Welcome greeting" />
@@ -600,6 +655,31 @@ export default function Settings({ user, role, onClose, onRefresh }) {
                 </div>
               ))}
               {listMsg && <p style={{ fontSize: 12, color: "#4ade80", margin: "4px 0 0" }}>{listMsg}</p>}
+
+              {role === "admin" && (
+                <div style={{ marginTop: 28 }}>
+                  <SectionHead title="Danger zone" />
+                  <div style={{ background: "rgba(248,113,113,0.06)", border: "1px solid rgba(248,113,113,0.2)",
+                    borderRadius: 10, padding: "14px 16px", display: "flex", alignItems: "center",
+                    justifyContent: "space-between", gap: 12 }}>
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 500, color: "#f87171" }}>Clear listening history</div>
+                      <div style={{ fontSize: 12, color: C.textDim, marginTop: 2 }}>Permanently deletes all play history. Cannot be undone.</div>
+                    </div>
+                    <button onClick={async () => {
+                      if (!confirm("Are you sure? This will permanently delete all listening history.")) return;
+                      await window.api.clearListeningHistory();
+                      setClearHistoryMsg("Listening history cleared.");
+                      setTimeout(() => setClearHistoryMsg(""), 3000);
+                    }} style={{ padding: "7px 16px", border: "1px solid rgba(248,113,113,0.4)",
+                      borderRadius: 7, background: "rgba(248,113,113,0.1)",
+                      color: "#f87171", cursor: "pointer", fontSize: 12, whiteSpace: "nowrap", flexShrink: 0 }}>
+                      Clear history
+                    </button>
+                  </div>
+                  {clearHistoryMsg && <p style={{ fontSize: 12, color: "#4ade80", margin: "8px 0 0" }}>{clearHistoryMsg}</p>}
+                </div>
+              )}
             </div>
           )}
 
