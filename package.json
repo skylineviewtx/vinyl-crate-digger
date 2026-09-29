@@ -4,6 +4,8 @@
   "description": "Personal vinyl record collection manager",
   "author": "Clayton Kucera",
   "main": "electron/main.js",
+  "license": "PolyForm-Noncommercial-1.0.0",
+
   "scripts": {
     "dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
     "build": "vite build",
@@ -30,8 +32,8 @@
         "to": "public"
       },
       {
-        "from": "license.txt",
-        "to": "license.txt"
+        "from": "EULA.txt",
+        "to": "EULA.txt"
       }
     ],
     "win": {
@@ -45,7 +47,7 @@
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
-      "license": "license.txt",
+      "license": "EULA.txt",
       "installerIcon": "public/icon.ico",
       "uninstallerIcon": "public/icon.ico",
       "installerHeaderIcon": "public/icon.ico",

@@ -1,9 +1,19 @@
+# Build output
 node_modules/
 dist/
 dist-app/
+
+# Personal data — never commit
 *.db
-*.log
+*.db-wal
+*.db-shm
+*.csv
+backup*.json
+smtp-test.js
+
+# Local config, logs, and scripts
 .env
+*.log
 service-out.log
 service-err.log
 start-server.bat
