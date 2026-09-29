@@ -5,6 +5,9 @@ contextBridge.exposeInMainWorld("api", {
   login:                (creds)         => ipcRenderer.invoke("auth:login", creds),
   logout:               ()              => ipcRenderer.invoke("auth:logout"),
   changePassword:       (data)          => ipcRenderer.invoke("auth:changePassword", data),
+  generateRecoveryCode: ()              => ipcRenderer.invoke("auth:generateRecoveryCode"),
+  hasRecoveryCode:      ()              => ipcRenderer.invoke("auth:hasRecoveryCode"),
+  resetWithRecoveryCode:(data)          => ipcRenderer.invoke("auth:resetWithRecoveryCode", data),
   // Settings
   getSetting:           (key)           => ipcRenderer.invoke("settings:get", key),
   setSetting:           (key, value)    => ipcRenderer.invoke("settings:set", { key, value }),

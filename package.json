@@ -1,6 +1,6 @@
 {
   "name": "vinyl-crate-digger",
-  "version": "2.3.11",
+  "version": "2.4.1",
   "description": "Personal vinyl record collection manager",
   "author": "Clayton Kucera",
   "main": "electron/main.js",
