@@ -1112,6 +1112,8 @@ export default function Settings({ user, role, onClose, onRefresh }) {
                 </div>
               )}
 
+              {/* CSV import hidden until it's wired up */}
+              {false && (<>
               <SectionHead title="Import from CSV" />
               <p style={{ fontSize: 13, color: C.textMuted, marginBottom: 14, lineHeight: 1.6 }}>
                 Import records from your CSV files. Requires both the Albums and Tracks CSV files.
@@ -1181,6 +1183,7 @@ export default function Settings({ user, role, onClose, onRefresh }) {
                 </div>
               )}
 
+              </>)}
               <SectionHead title="Fetch missing artwork" />
               <p style={{ fontSize: 13, color: C.textMuted, marginBottom: 14, lineHeight: 1.6 }}>
                 Automatically search Discogs for album artwork for all records missing images. Requires a Discogs token in Connections.
